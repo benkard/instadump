@@ -67,7 +67,7 @@
 
 
 (defonce ^{:private true} dbenv (atom nil))
-(defonce ^{:private true} state-vars (atom {}))
+(defonce ^{:private false} state-vars (atom {}))
 
 
 ;;;; * Public API
