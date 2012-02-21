@@ -71,10 +71,17 @@
 
 
 ;;;; * Public API
-(defn setup-instadump! [dirname]
+(defn setup-instadump!
+  "Set up the Instadump database at the file system location indicated
+  by dirname."
+  [dirname]
   (reset! dbenv (make-db-env dirname)))
 
-(defmacro defstate [sym default]
+(defmacro defstate
+  "Define a global ref managed by Instadump.  The supplied default
+  value is used if the variable cannot be found in the database.
+  Otherwise, the value stored in the database is used."
+  [sym default]
   (let [dbkey (str *ns* "/" (name sym))]
     `(defonce ~sym
        (let [r# (ref (with-db (getkey ~dbkey ~default)))]
@@ -82,13 +89,22 @@
          r#))))
 
 
-(defn save-all-global-state! []
+(defn save-all-global-state!
+  "Direct Instadump to dump a snapshot of all variables created by
+  defstate into the database.  save-all-global-state! runs in an
+  implicit transaction in order to ensure data consistency."
+  []
   (with-db
     (dosync
       (doseq [[key r] @state-vars]
         (putkey key (ensure r))))))
 
-(defn reload-all-global-state! []
+(defn reload-all-global-state!
+  "Direct Instadump to revert all variables created by defstate to the
+  state saved by the last invocation of save-all-global-state!.  Will
+  fail if any variables cannot be restored (e.g. if some variables
+  have never been saved before)."
+  []
   (with-db
     (dosync
       (doseq [[key r] @state-vars]
