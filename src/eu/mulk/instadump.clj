@@ -48,7 +48,7 @@
             *print-meta* true]
     (pr-str x)))
 
-(defn- getkey [key default]
+(defn getkey [key default]
   (let [entry (DatabaseEntry.)]
     (if (= (.get *db* *txn* (DatabaseEntry. (.getBytes key)) entry nil)
            OperationStatus/SUCCESS)
