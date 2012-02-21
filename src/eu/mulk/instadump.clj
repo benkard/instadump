@@ -30,7 +30,7 @@
            result)
       (finally (.abort *txn*)))))
 
-(defn- call-with-db [thunk]
+(defn call-with-db [thunk]
   (let [dbconfig (doto (DatabaseConfig.)
                    (.setTransactional            true)
                    (.setAllowCreate              true)
